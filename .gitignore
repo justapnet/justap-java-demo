@@ -1,5 +1,5 @@
 .idea/
-/src/main/resources/justap_pubkey.pem
-/src/main/resources/justap_pubkey_pkcs8.pem
-/src/main/resources/merchant_priv.pem
-/src/main/resources/merchant_priv_pkcs8.pem
+src/main/resources/justap_pubkey.pem
+src/main/resources/justap_pubkey_pkcs8.pem
+src/main/resources/merchant_priv.pem
+src/main/resources/merchant_priv_pkcs8.pem
