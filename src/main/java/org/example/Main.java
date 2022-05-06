@@ -19,6 +19,7 @@ public class Main {
 
     // 微信小程序支付 demo
     public static void wechatpayLite() throws GeneralSecurityException, IOException {
+        // 初始化sdk
         ApiClient defaultClient = Configuration.getDefaultApiClient();
         ApiKeyAuth ApiKeyAuth = (ApiKeyAuth) defaultClient.getAuthentication("ApiKeyAuth");
 
@@ -36,6 +37,7 @@ public class Main {
 
         DefaultApi apiInstance = new DefaultApi(defaultClient);
 
+        // 开始构造下单参数
         Float amout = 0.01f;
         V1CreateChargeRequest body = new V1CreateChargeRequest();
         body.setAmount(amout);
