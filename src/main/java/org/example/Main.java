@@ -1,5 +1,8 @@
 package org.example;
 
+import cn.hutool.core.codec.Base64Decoder;
+import cn.hutool.crypto.symmetric.SymmetricAlgorithm;
+import cn.hutool.crypto.symmetric.SymmetricCrypto;
 import justap.*;
 import justap.auth.*;
 import io.swagger.client.model.*;
@@ -7,14 +10,71 @@ import justap_sdk.DefaultApi;
 
 import java.io.File;
 import okio.Buffer;
+
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
+import java.security.spec.KeySpec;
 import java.util.*;
+import java.security.Key;
+
+import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.DESKeySpec;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 
 public class Main {
-    public static void main(String[] args) throws GeneralSecurityException, IOException {
-        wechatpayLite();
+    public static void main(String[] args) throws Exception {
+//        wechatpayLite();
+        decodeNotifyData();
+    }
+
+    public static void decodeNotifyData() throws Exception {
+        Boolean isEncrypted = true;
+        if (!isEncrypted) return;
+
+        String dataCiphertext = "6VyyZrGRsCEdCZNE+sUBKA==";
+        String key = "f1gjoObO";
+
+
+        Base64.Decoder decoder = Base64.getDecoder();
+        SymmetricCrypto des = new SymmetricCrypto(SymmetricAlgorithm.DES, key.getBytes(StandardCharsets.UTF_8));
+        String data = des.decryptStr(decoder.decode(dataCiphertext));
+
+        System.out.println(data);
+
+
+//        Cipher c = Cipher.getInstance("DES/CBC/PKCS5Padding");
+//        IvParameterSpec ips = new IvParameterSpec(decoder.decode(encryptedIv));
+//        SecretKey k = convertStringToSecretKeyto(encryptedKey);
+//        c.init(Cipher.DECRYPT_MODE, k, ips);
+//        byte output[] = c.doFinal(decoder.decode(dataCiphertext));
+
+//        SymmetricCrypto des = new SymmetricCrypto(SymmetricAlgorithm.DES, encryptedKey.getBytes());
+//        String data = des.decryptStr(decoder.decode(dataCiphertext));
+    }
+
+    public static String desDecrypt(byte[] data, byte[] key) {
+        try {
+            Cipher cipher = Cipher.getInstance("DES/CBC/PKCS5Padding");
+            cipher.init(Cipher.DECRYPT_MODE,
+                    SecretKeyFactory.getInstance("DES").generateSecret(new DESKeySpec(key)),
+                    new IvParameterSpec(key)
+            );
+
+            return new String(cipher.doFinal(data));
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static SecretKey convertStringToSecretKeyto(String encodedKey) {
+        byte[] decodedKey = Base64.getDecoder().decode(encodedKey);
+        SecretKey originalKey = new SecretKeySpec(decodedKey, "DESede");
+        return originalKey;
     }
 
     // 微信小程序支付 demo
